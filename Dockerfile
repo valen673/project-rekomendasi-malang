@@ -1,5 +1,5 @@
 # Gunakan image dasar Python
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Install Rust dan Cargo (manajer paket Rust)
 RUN apt-get update && apt-get install -y curl build-essential \
