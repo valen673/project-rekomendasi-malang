@@ -5,8 +5,8 @@ FROM python:3.10-slim
 RUN apt-get update && \
     apt-get install -y curl build-essential && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    # Pastikan Rust ditambahkan ke PATH
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc && \
+    # Menambahkan Rust dan Cargo ke PATH di lingkungan build
+    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /etc/profile.d/rust.sh && \
     apt-get clean
 
 # Set working directory
@@ -26,4 +26,4 @@ COPY . /app/
 EXPOSE 5000
 
 # Jalankan aplikasi menggunakan Flask
-CMD ["python", "appp.py"] 
+CMD ["python", "appp.py"]  # Ganti dengan nama file aplikasi yang benar
