@@ -1,1 +1,1 @@
-web: python appp.py
+web: gunicorn appp:app --timeout 120
