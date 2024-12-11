@@ -1,34 +1,22 @@
-# Gunakan Python 3.10 atau versi yang kompatibel
 FROM python:3.10-slim
 
-# Install dependencies yang diperlukan, termasuk curl dan build-essential
-RUN apt-get update && apt-get install -y \
-    curl \
-    build-essential \
-    libssl-dev \
-    libffi-dev \
-    && apt-get clean
-
-# Install Rust secara eksplisit
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    export PATH="$HOME/.cargo/bin:$PATH" && \
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /etc/profile.d/rust.sh
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libssl-dev libffi-dev python3-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Salin file requirements.txt ke dalam container
-COPY requirements.txt /app/
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Install dependencies Python
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Copy application code
+COPY . .
 
-# Salin kode aplikasi Anda ke dalam container
-COPY . /app/
-
-# Expose port yang digunakan aplikasi Anda
+# Expose port
 EXPOSE 5000
 
-# Jalankan aplikasi menggunakan Flask
-CMD ["python", "appp.py"]  # Ganti dengan nama file aplikasi yang benar
+# Run application
+CMD ["python", "app.py"]
