@@ -8,6 +8,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 import pandas as pd
 
+tf.config.set_visible_devices([], 'GPU')
+
 app = Flask(__name__)
 
 # Load dataset dan model (ganti dengan path yang sesuai)
