@@ -1,24 +1,21 @@
-# Gunakan image dasar Python
+# Gunakan Python 3.10 atau versi terbaru yang kompatibel
 FROM python:3.10-slim
 
-# Install Rust dan Cargo (manajer paket Rust)
-RUN apt-get update && apt-get install -y curl build-essential \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y \
-    && export PATH="$HOME/.cargo/bin:$PATH"
-
-# Set up lingkungan kerja aplikasi
+# Set working directory
 WORKDIR /app
 
-# Salin file requirements.txt dan install dependensi Python
+# Salin file requirements.txt ke dalam container
 COPY requirements.txt /app/
+
+# Install dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Salin seluruh kode aplikasi ke dalam kontainer
-COPY . /app
+# Salin kode aplikasi Anda ke dalam container
+COPY . /app/
 
-# Tentukan port yang digunakan oleh aplikasi
+# Expose port yang digunakan aplikasi Anda
 EXPOSE 5000
 
-# Jalankan aplikasi (contoh dengan Flask)
+# Jalankan aplikasi menggunakan Flask
 CMD ["python", "appp.py"]
