@@ -5,6 +5,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential libssl-dev libffi-dev python3-dev cargo && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install the latest version of Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    export PATH="/root/.cargo/bin:${PATH}"
+
 # Set working directory
 WORKDIR /app
 
