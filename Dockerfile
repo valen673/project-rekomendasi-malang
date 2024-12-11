@@ -1,13 +1,11 @@
-# Gunakan Python 3.10 atau versi yang kompatibel
+# Gunakan image base Rust
+FROM rust:1.68-slim AS builder
+
+# Gunakan Python 3.10
 FROM python:3.10-slim
 
-# Install dependencies yang diperlukan, termasuk curl dan build-essential
-RUN apt-get update && apt-get install -y curl build-essential libssl-dev libffi-dev
-
-# Install Rust secara eksplisit
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    export PATH="$HOME/.cargo/bin:$PATH" && \
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+# Install dependencies lainnya
+RUN apt-get update && apt-get install -y build-essential curl && apt-get clean
 
 # Set working directory
 WORKDIR /app
