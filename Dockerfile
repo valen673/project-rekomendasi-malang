@@ -1,13 +1,13 @@
 # Gunakan Python 3.10 atau versi yang kompatibel
 FROM python:3.10-slim
 
-# Install Rust dan dependencies lainnya
-RUN apt-get update && \
-    apt-get install -y curl build-essential && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    # Menambahkan Rust dan Cargo ke PATH di lingkungan build
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /etc/profile.d/rust.sh && \
-    apt-get clean
+# Install dependencies yang diperlukan, termasuk curl dan build-essential
+RUN apt-get update && apt-get install -y curl build-essential libssl-dev libffi-dev
+
+# Install Rust secara eksplisit
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    export PATH="$HOME/.cargo/bin:$PATH" && \
+    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
 
 # Set working directory
 WORKDIR /app
@@ -15,7 +15,7 @@ WORKDIR /app
 # Salin file requirements.txt ke dalam container
 COPY requirements.txt /app/
 
-# Install dependencies
+# Install dependencies Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
