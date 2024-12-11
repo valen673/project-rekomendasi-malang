@@ -3,10 +3,11 @@ FROM python:3.10-slim
 
 # Install Rust dan dependencies lainnya
 RUN apt-get update && \
-    apt-get install -y curl build-essential \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
-    && export PATH="$HOME/.cargo/bin:$PATH" \
-    && apt-get clean
+    apt-get install -y curl build-essential && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    # Pastikan Rust ditambahkan ke PATH
+    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc && \
+    apt-get clean
 
 # Set working directory
 WORKDIR /app
@@ -25,4 +26,4 @@ COPY . /app/
 EXPOSE 5000
 
 # Jalankan aplikasi menggunakan Flask
-CMD ["python", "appp.py"]
+CMD ["python", "appp.py"] 
