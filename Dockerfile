@@ -1,5 +1,12 @@
-# Gunakan Python 3.10 atau versi terbaru yang kompatibel
+# Gunakan Python 3.10 atau versi yang kompatibel
 FROM python:3.10-slim
+
+# Install Rust dan dependencies lainnya
+RUN apt-get update && \
+    apt-get install -y curl build-essential \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && export PATH="$HOME/.cargo/bin:$PATH" \
+    && apt-get clean
 
 # Set working directory
 WORKDIR /app
