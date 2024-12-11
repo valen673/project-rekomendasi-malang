@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential libssl-dev libffi-dev python3-dev && \
+    build-essential libssl-dev libffi-dev python3-dev cargo && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 5000
 
 # Run application
-CMD ["python", "app.py"]
+CMD ["python", "appp.py"]
