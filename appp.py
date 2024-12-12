@@ -51,11 +51,11 @@ def predict_relevance(input_features):
         combined_vector = tf.convert_to_tensor([combined_vector], dtype=tf.float32)
 
         predicted_score = model.predict(combined_vector)[0][0]
-        recommendations.append({
-            'name': data.iloc[idx]['name'],
-            'description': data.iloc[idx]['description'],
-            'predicted_score': float(predicted_score)  # Konversi ke float
-        })
+        # Ambil semua atribut CSV untuk tempat wisata
+        place_info = data.iloc[idx].to_dict()  # Konversi baris CSV ke dictionary
+        place_info['predicted_score'] = float(predicted_score)  # Tambahkan skor prediksi
+        recommendations.append(place_info)
+        
     recommendations = sorted(recommendations, key=lambda x: x['predicted_score'], reverse=True)
     return recommendations
 
