@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import tensorflow as tf
 from tensorflow.keras.metrics import MeanSquaredError
 from tensorflow.keras.losses import MeanSquaredError
@@ -11,6 +11,10 @@ import pandas as pd
 tf.config.set_visible_devices([], 'GPU')
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html') 
 
 # Load dataset dan model (ganti dengan path yang sesuai)
 data = pd.read_csv("dataset_tempat_wisata_malang.csv", sep=";")
