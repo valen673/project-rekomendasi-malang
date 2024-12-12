@@ -55,14 +55,17 @@ def predict_relevance(input_features):
     recommendations = sorted(recommendations, key=lambda x: x['predicted_score'], reverse=True)
     return recommendations
 
-# API Endpoint untuk menerima input dan mengembalikan rekomendasi
 @app.route('/recommend', methods=['POST'])
 def recommend():
-    input_features = request.json.get('input', '')  # Mengambil input JSON dari request
+    input_features = request.json.get('input', '')
     if input_features:
-        recommendations = predict_relevance(input_features)
-        return jsonify({'recommendations': recommendations})  # Kembalikan hasil sebagai JSON
+        try:
+            recommendations = predict_relevance(input_features)
+            return jsonify({'recommendations': recommendations})
+        except Exception as e:
+            # Tangani kesalahan yang mungkin terjadi selama prediksi
+            return jsonify({'error': str(e)}), 500  # Kembalikan status error 500
     return jsonify({'error': 'Invalid input'}), 400
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
