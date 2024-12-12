@@ -52,11 +52,51 @@ def predict_relevance(input_features):
 
         predicted_score = model.predict(combined_vector)[0][0]
         # Ambil semua atribut CSV untuk tempat wisata
-        place_info = data.iloc[idx].to_dict()  # Konversi baris CSV ke dictionary
-        place_info['predicted_score'] = float(predicted_score)  # Tambahkan skor prediksi
-        recommendations.append(place_info)
-        
-    recommendations = sorted(recommendations, key=lambda x: x['predicted_score'], reverse=True)
+        place_info = data.iloc[idx].to_dict()
+
+        # Buat dictionary dengan atribut yang diinginkan
+        ordered_place_info = {
+            "placeId": place_info["placeId"],
+            "name": place_info["name"],
+            "rating": place_info["rating"],
+            "review": place_info["review"],
+            "category": place_info["category"],
+            "description": place_info["description"],
+            "city": place_info["city"],
+            "address": place_info["address"],
+            "postalCode": place_info["postalCode"],
+            "imageUrl": place_info["imageUrl"],
+            "url": place_info["url"],
+            "latitude": place_info["latitude"],
+            "longitude": place_info["longitude"],
+            "phone": place_info["phone"],
+            "openingHours/0/day": place_info["openingHours/0/day"],
+            "openingHours/0/hours": place_info["openingHours/0/hours"],
+            "openingHours/1/day": place_info["openingHours/1/day"],
+            "openingHours/1/hours": place_info["openingHours/1/hours"],
+            "openingHours/2/day": place_info["openingHours/2/day"],
+            "openingHours/2/hours": place_info["openingHours/2/hours"],
+            "openingHours/3/day": place_info["openingHours/3/day"],
+            "openingHours/3/hours": place_info["openingHours/3/hours"],
+            "openingHours/4/day": place_info["openingHours/4/day"],
+            "openingHours/4/hours": place_info["openingHours/4/hours"],
+            "openingHours/5/day": place_info["openingHours/5/day"],
+            "openingHours/5/hours": place_info["openingHours/5/hours"],
+            "openingHours/6/day": place_info["openingHours/6/day"],
+            "openingHours/6/hours": place_info["openingHours/6/hours"],
+        }
+
+        # Tambahkan predicted_score untuk pengurutan sementara
+        ordered_place_info["predicted_score"] = predicted_score
+        recommendations.append(ordered_place_info)
+
+    # Urutkan berdasarkan predicted_score secara descending
+    recommendations = sorted(recommendations, key=lambda x: x["predicted_score"], reverse=True)
+
+    # Hapus atribut predicted_score dari output akhir
+    for rec in recommendations:
+        del rec["predicted_score"]
+
     return recommendations
 
 @app.route('/recommend', methods=['POST'])
