@@ -7,6 +7,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 import pandas as pd
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 tf.config.set_visible_devices([], 'GPU')
 
