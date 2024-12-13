@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wisata Malang Recommender</title>
+    <title>Malang Insider</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,6 +47,26 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        /* Indikator loading */
+        .loading {
+            display: none;
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -54,6 +74,14 @@
         <h1>Mau Pergi Kemana?</h1>
         <input type="text" id="search-input" placeholder="Search something...">
         <button onclick="search()">Cari</button>
+
+        <!-- Indikator loading -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Hasil rekomendasi -->
         <div class="results" id="results"></div>
     </div>
 
@@ -61,16 +89,24 @@
         async function search() {
             const query = document.getElementById('search-input').value;
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // Clear previous results
+            const loadingDiv = document.getElementById('loading');
+            
+            // Clear previous results and show loading indicator
+            resultsDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
 
             if (query.trim() === '') {
                 alert('Harap masukkan kata kunci pencarian!');
+                loadingDiv.style.display = 'none';
                 return;
             }
 
             try {
                 const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
                 const data = await response.json();
+
+                // Hide loading indicator after data is fetched
+                loadingDiv.style.display = 'none';
 
                 if (data.recommendations.length === 0) {
                     resultsDiv.innerHTML = '<p>Tidak ada hasil ditemukan.</p>';
@@ -85,12 +121,16 @@
                         <p>Rating: ${item.rating}</p>
                         <p>${item.address}</p>
                         <p>Description: ${item.description}</p>
+                        <a href="${item.url}" target="_blank">Lihat di Google Maps</a>
+                        <br>
+                        <img src="${item.imageUrl}" alt="${item.name}" style="width: 100%; max-width: 500px; height: auto; margin-top: 10px;">
                     `;
                     resultsDiv.appendChild(div);
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);
                 resultsDiv.innerHTML = '<p>Terjadi kesalahan saat memuat rekomendasi.</p>';
+                loadingDiv.style.display = 'none'; // Hide loading in case of error
             }
         }
     </script>
