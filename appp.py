@@ -18,6 +18,8 @@ def index():
 
 # Load dataset dan model (ganti dengan path yang sesuai)
 data = pd.read_csv("dataset_tempat_wisata_malang.csv", sep=";")
+# Ganti NaN dengan string kosong
+data = data.fillna('')
 stopword_factory = StopWordRemoverFactory()
 stopword_remover = stopword_factory.create_stop_word_remover()
 
@@ -53,7 +55,11 @@ def predict_relevance(input_features):
         predicted_score = model.predict(combined_vector)[0][0]
         # Ambil semua atribut CSV untuk tempat wisata
         place_info = data.iloc[idx].to_dict()
-
+        
+        for key, value in place_info.items():
+            if pd.isna(value):
+                place_info[key] = ''
+                
         # Buat dictionary dengan atribut yang diinginkan
         ordered_place_info = {
             "placeId": place_info["placeId"],
@@ -102,27 +108,32 @@ def predict_relevance(input_features):
 @app.route('/recommend', methods=['POST'])
 def recommend():
     input_features = request.json.get('input', '')
+    logging.debug(f"Received input for recommendation: {input_features}")
     if input_features:
         try:
             recommendations = predict_relevance(input_features)
+            logging.debug(f"Generated recommendations: {recommendations}")
             return jsonify({'recommendations': recommendations})
         except Exception as e:
-            # Tangani kesalahan yang mungkin terjadi selama prediksi
-            return jsonify({'error': str(e)}), 500  # Kembalikan status error 500
+            logging.error(f"Error in recommendation: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+    logging.warning("Invalid input received")
     return jsonify({'error': 'Invalid input'}), 400
 
 
 @app.route("/search", methods=["GET"])
 def search():
     query = request.args.get("query", "").strip()
+    logging.debug(f"Received search query: {query}")
     if query:
         try:
-            # Gunakan fungsi `predict_relevance` untuk memberikan rekomendasi
             recommendations = predict_relevance(query)
+            logging.debug(f"Search results: {recommendations}")
             return jsonify({"recommendations": recommendations})
         except Exception as e:
-            # Tangani kesalahan yang mungkin terjadi selama prediksi
-            return jsonify({"error": str(e)}), 500  # Kembalikan status error 500
+            logging.error(f"Error in search: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+    logging.warning("Empty search query received")
     return jsonify({"error": "Invalid input, query cannot be empty"}), 400
 
 
