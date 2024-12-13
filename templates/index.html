@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisata Malang Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .result-item {
+            background-color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mau Pergi Kemana?</h1>
+        <input type="text" id="search-input" placeholder="Search something...">
+        <button onclick="search()">Cari</button>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        async function search() {
+            const query = document.getElementById('search-input').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // Clear previous results
+
+            if (query.trim() === '') {
+                alert('Harap masukkan kata kunci pencarian!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.recommendations.length === 0) {
+                    resultsDiv.innerHTML = '<p>Tidak ada hasil ditemukan.</p>';
+                    return;
+                }
+
+                data.recommendations.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerHTML = `
+                        <h3>${item.name}</h3>
+                        <p>Rating: ${item.rating}</p>
+                        <p>${item.address}</p>
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                resultsDiv.innerHTML = '<p>Terjadi kesalahan saat memuat rekomendasi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
