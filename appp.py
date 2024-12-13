@@ -111,5 +111,20 @@ def recommend():
             return jsonify({'error': str(e)}), 500  # Kembalikan status error 500
     return jsonify({'error': 'Invalid input'}), 400
 
+
+@app.route("/search", methods=["GET"])
+def search():
+    query = request.args.get("query", "").strip()
+    if query:
+        try:
+            # Gunakan fungsi `predict_relevance` untuk memberikan rekomendasi
+            recommendations = predict_relevance(query)
+            return jsonify({"recommendations": recommendations})
+        except Exception as e:
+            # Tangani kesalahan yang mungkin terjadi selama prediksi
+            return jsonify({"error": str(e)}), 500  # Kembalikan status error 500
+    return jsonify({"error": "Invalid input, query cannot be empty"}), 400
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
